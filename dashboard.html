@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sandy -- Project Portfolio</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-surface:oklch(0.13 0.015 280);
+  --bg-raised:oklch(0.16 0.017 280);
+  --bg-elevated:oklch(0.19 0.019 280);
+  --bg-hover:oklch(0.22 0.021 280);
+  --border-subtle:oklch(0.24 0.02 280);
+  --border-default:oklch(0.29 0.024 280);
+  --text-primary:oklch(0.88 0.02 280);
+  --text-secondary:oklch(0.68 0.024 280);
+  --text-muted:oklch(0.48 0.02 280);
+  --accent:oklch(0.72 0.16 250);
+  --accent-muted:oklch(0.72 0.16 250 / 0.12);
+  --accent-hover:oklch(0.78 0.16 250);
+  --green:oklch(0.72 0.16 145);
+  --green-muted:oklch(0.72 0.16 145 / 0.12);
+  --yellow:oklch(0.78 0.15 85);
+  --yellow-muted:oklch(0.78 0.15 85 / 0.12);
+  --red:oklch(0.68 0.18 25);
+  --red-muted:oklch(0.68 0.18 25 / 0.12);
+  --violet:oklch(0.68 0.16 310);
+  --violet-muted:oklch(0.68 0.16 310 / 0.12);
+  --orange:oklch(0.72 0.14 55);
+  --orange-muted:oklch(0.72 0.14 55 / 0.12);
+  --teal:oklch(0.72 0.1 180);
+  --teal-muted:oklch(0.72 0.1 180 / 0.12);
+  --radius:8px;
+  --radius-lg:12px;
+  --mono:'SF Mono','JetBrains Mono','Fira Code',ui-monospace,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',system-ui,sans-serif;
+  --t0:0.58rem;--t1:0.68rem;--t2:0.78rem;--t3:0.88rem;--t4:1rem;--t5:1.2rem;
+}
+html{font-size:15px;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg-surface);
+  color:var(--text-primary);
+  font-family:var(--sans);
+  line-height:1.5;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* HEADER */
+.site-header{
+  padding:2rem 2.5rem 1.5rem;
+  position:relative;
+}
+.site-header::after{
+  content:'';position:absolute;bottom:0;left:2.5rem;right:2.5rem;
+  height:1px;background:var(--border-subtle);
+}
+.site-title{
+  font-size:var(--t5);font-weight:650;letter-spacing:-0.02em;
+  color:var(--text-primary);
+}
+.site-subtitle{
+  font-size:var(--t1);color:var(--text-muted);
+  letter-spacing:0.06em;text-transform:uppercase;font-weight:500;
+  margin-top:0.25rem;
+}
+
+/* STATS BAR */
+.stats-bar{
+  display:flex;gap:1.5rem;padding:0.85rem 2.5rem;
+  border-bottom:1px solid var(--border-subtle);
+  flex-wrap:wrap;
+}
+.stat-item{
+  display:flex;align-items:baseline;gap:0.4rem;
+}
+.stat-value{
+  font-size:var(--t4);font-weight:700;font-family:var(--mono);
+  color:var(--text-primary);
+}
+.stat-label{
+  font-size:var(--t0);color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:0.08em;font-weight:600;
+}
+
+/* SPRINT */
+.sprint{
+  padding:1.25rem 2.5rem;
+  position:relative;
+}
+.sprint::after{
+  content:'';position:absolute;bottom:0;left:2.5rem;right:2.5rem;
+  height:1px;background:var(--border-subtle);
+}
+.sprint-label{
+  font-size:var(--t0);text-transform:uppercase;letter-spacing:0.1em;
+  color:var(--text-muted);font-weight:600;margin-bottom:0.75rem;
+}
+.sprint-track{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:0.5rem;
+}
+.sprint-day{
+  padding:0.65rem 0.85rem;
+  background:var(--bg-raised);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--radius);
+  transition:border-color 0.18s ease-out,background 0.18s ease-out;
+  cursor:default;
+}
+.sprint-day:hover{
+  border-color:var(--border-default);background:var(--bg-hover);
+}
+.sprint-day.is-today{
+  border-color:var(--accent);
+  background:var(--accent-muted);
+}
+.sprint-day .day-date{
+  font-size:var(--t0);color:var(--text-muted);
+  letter-spacing:0.08em;text-transform:uppercase;font-weight:600;
+}
+.sprint-day.is-today .day-date{color:var(--accent)}
+.sprint-day .day-title{
+  font-size:var(--t2);font-weight:500;color:var(--text-primary);
+  margin-top:0.15rem;line-height:1.3;
+}
+.sprint-day .day-tag{
+  display:inline-block;font-size:0.55rem;letter-spacing:0.06em;
+  text-transform:uppercase;font-weight:700;
+  margin-top:0.3rem;padding:0.12rem 0.4rem;border-radius:3px;
+}
+.sprint-day.is-today .day-tag{background:var(--accent-muted);color:var(--accent)}
+.day-tag.research{background:var(--violet-muted);color:var(--violet)}
+.day-tag.sprint{background:var(--green-muted);color:var(--green)}
+.day-tag.planning{background:var(--yellow-muted);color:var(--yellow)}
+.day-tag.dev{background:var(--orange-muted);color:var(--orange)}
+.day-tag.deadline{background:var(--red-muted);color:var(--red)}
+
+/* JULES INTEGRATION */
+.jules-section{
+  padding:1.5rem 2.5rem;
+  position:relative;
+}
+.jules-section::after{
+  content:'';position:absolute;bottom:0;left:2.5rem;right:2.5rem;
+  height:1px;background:var(--border-subtle);
+}
+.jules-card{
+  background:var(--bg-raised);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--radius-lg);
+  padding:1.25rem 1.5rem;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.5rem;
+  transition:border-color 0.2s ease-out;
+}
+.jules-card:hover{
+  border-color:var(--border-default);
+}
+.jules-title{
+  font-size:var(--t4);font-weight:600;color:var(--text-primary);
+  margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem;
+}
+.jules-title .jules-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:5px;
+  background:var(--accent-muted);color:var(--accent);
+  font-size:var(--t1);font-weight:700;
+}
+.jules-desc{
+  font-size:var(--t2);color:var(--text-secondary);line-height:1.5;
+  margin-bottom:1rem;
+}
+.jules-steps{
+  list-style:none;padding:0;
+}
+.jules-steps li{
+  display:flex;align-items:flex-start;gap:0.55rem;
+  font-size:var(--t2);color:var(--text-secondary);
+  margin-bottom:0.5rem;line-height:1.45;
+}
+.jules-steps .step-num{
+  font-family:var(--mono);font-weight:700;font-size:var(--t1);
+  color:var(--accent);flex-shrink:0;min-width:1.2rem;text-align:right;
+}
+.jules-status{
+  background:var(--bg-elevated);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--radius);
+  padding:1rem 1.15rem;
+}
+.jules-status-title{
+  font-size:var(--t1);text-transform:uppercase;letter-spacing:0.08em;
+  color:var(--text-muted);font-weight:600;margin-bottom:0.65rem;
+}
+.jules-status-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0.35rem 0;
+  border-bottom:1px solid var(--border-subtle);
+  font-size:var(--t2);color:var(--text-secondary);
+}
+.jules-status-item:last-child{border-bottom:none}
+.jules-status-item .status-label{color:var(--text-secondary)}
+.jules-status-item .status-value{font-family:var(--mono);font-size:var(--t1)}
+.status-ready{color:var(--green)}
+.status-pending{color:var(--yellow)}
+.status-inactive{color:var(--text-muted)}
+
+/* HEATMAP */
+.heatmap-section{
+  padding:1.25rem 2.5rem;
+  position:relative;
+}
+.heatmap-section::after{
+  content:'';position:absolute;bottom:0;left:2.5rem;right:2.5rem;
+  height:1px;background:var(--border-subtle);
+}
+.heatmap-label{
+  font-size:var(--t0);text-transform:uppercase;letter-spacing:0.1em;
+  color:var(--text-muted);font-weight:600;margin-bottom:0.75rem;
+}
+.heatmap-grid{
+  display:flex;flex-direction:column;gap:0.35rem;
+}
+.heatmap-row{
+  display:grid;
+  grid-template-columns:140px repeat(8,1fr) 40px;
+  gap:4px;
+  align-items:center;
+}
+.heatmap-row-header{
+  font-size:var(--t0);color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:0.06em;font-weight:600;
+  text-align:center;
+}
+.heatmap-repo{
+  font-size:var(--t1);color:var(--text-secondary);
+  font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.heatmap-cell{
+  height:16px;border-radius:3px;
+  background:var(--bg-elevated);
+  transition:background 0.15s ease-out;
+}
+.heatmap-cell.l1{background:oklch(0.22 0.06 250 / 0.6)}
+.heatmap-cell.l2{background:oklch(0.40 0.12 250 / 0.7)}
+.heatmap-cell.l3{background:oklch(0.55 0.14 250 / 0.85)}
+.heatmap-cell.l4{background:oklch(0.72 0.16 250)}
+.heatmap-count{
+  font-size:var(--t0);color:var(--text-muted);
+  font-family:var(--mono);text-align:right;
+}
+
+/* TIER SECTIONS */
+.tier-section{
+  padding:1.5rem 2.5rem 0.5rem;
+}
+.tier-header{
+  display:flex;align-items:center;gap:0.6rem;
+  margin-bottom:0.65rem;
+}
+.tier-dot{
+  width:7px;height:7px;border-radius:50%;flex-shrink:0;
+}
+.tier-label{
+  font-size:var(--t0);text-transform:uppercase;letter-spacing:0.1em;
+  color:var(--text-muted);font-weight:600;
+}
+.tier-count{
+  font-size:var(--t0);color:var(--text-muted);font-family:var(--mono);
+  margin-left:0.25rem;
+}
+
+/* PROJECT GRID */
+.projects{
+  padding:0 2.5rem 1.5rem;
+  display:grid;gap:0.65rem;
+}
+.projects.tier-1{grid-template-columns:repeat(auto-fill,minmax(380px,1fr))}
+.projects.tier-2{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.projects.tier-3{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+
+/* PROJECT CARD */
+.project{
+  background:var(--bg-raised);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--radius-lg);
+  padding:1.15rem 1.3rem;
+  display:flex;flex-direction:column;gap:0.65rem;
+  transition:border-color 0.2s ease-out,box-shadow 0.2s ease-out;
+  position:relative;
+  opacity:0;
+  transform:translateY(8px);
+  animation:cardIn 0.35s ease-out forwards;
+}
+.project:hover{
+  border-color:var(--border-default);
+  box-shadow:0 2px 16px oklch(0 0 0 / 0.25);
+}
+@keyframes cardIn{
+  to{opacity:1;transform:translateY(0)}
+}
+
+.project-head{display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem}
+.project-name{
+  font-size:var(--t4);font-weight:600;letter-spacing:-0.01em;line-height:1.2;
+  color:var(--text-primary);
+}
+.project-badges{display:flex;gap:0.3rem;align-items:center;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.badge{
+  font-size:0.55rem;letter-spacing:0.06em;text-transform:uppercase;font-weight:700;
+  padding:0.15rem 0.45rem;border-radius:50px;line-height:1.1;
+}
+.badge.status-active{background:var(--green-muted);color:var(--green)}
+.badge.status-planning{background:var(--yellow-muted);color:var(--yellow)}
+.badge.status-stale{background:var(--red-muted);color:var(--red)}
+.badge.status-maintenance{background:var(--accent-muted);color:var(--accent)}
+.badge.tier{background:oklch(0.2 0.01 280);color:var(--text-muted);font-family:var(--mono)}
+.badge.needs-push{background:var(--orange-muted);color:var(--orange)}
+
+.project-repo{
+  font-size:var(--t1);color:var(--text-muted);font-family:var(--mono);
+  line-height:1.3;
+}
+.project-repo a{color:var(--text-muted);text-decoration:none;transition:color 0.15s}
+.project-repo a:hover{color:var(--accent)}
+
+.project-milestone{
+  font-size:var(--t2);color:var(--text-secondary);
+  padding:0.4rem 0.65rem;
+  background:var(--bg-elevated);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--radius);
+  line-height:1.35;
+}
+.project-milestone .ml-label{
+  font-size:var(--t0);text-transform:uppercase;letter-spacing:0.08em;
+  color:var(--text-muted);font-weight:600;display:block;margin-bottom:0.1rem;
+  font-family:var(--mono);
+}
+
+/* PROGRESS */
+.progress-wrap{}
+.progress-track{
+  height:3px;background:var(--bg-elevated);border-radius:2px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;border-radius:2px;
+  transition:width 0.8s ease-out;
+  background:var(--accent);
+}
+.progress-fill.stale{
+  background:var(--text-muted);opacity:0.45;
+}
+.progress-fill.planning{
+  background:var(--yellow);opacity:0.7;
+}
+.progress-meta{
+  display:flex;justify-content:space-between;
+  font-size:var(--t0);color:var(--text-muted);
+  margin-top:0.2rem;
+  font-family:var(--mono);
+  letter-spacing:0.02em;
+}
+
+.project-meta{display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;margin-top:auto}
+.tech-tag{
+  font-size:0.58rem;font-weight:600;letter-spacing:0.02em;
+  padding:0.15rem 0.4rem;border-radius:3px;
+  background:var(--bg-elevated);color:var(--text-muted);
+  border:1px solid var(--border-subtle);
+  font-family:var(--mono);
+}
+.tech-tag.lang-python{color:var(--yellow);border-color:oklch(0.78 0.15 85 / 0.2)}
+.tech-tag.lang-ts{color:var(--accent);border-color:oklch(0.72 0.16 250 / 0.2)}
+.tech-tag.lang-rust{color:var(--orange);border-color:oklch(0.72 0.14 55 / 0.2)}
+.tech-tag.lang-go{color:var(--teal);border-color:oklch(0.72 0.1 180 / 0.2)}
+.tech-tag.lang-shell{color:var(--violet);border-color:oklch(0.68 0.16 310 / 0.2)}
+.tech-tag.lang-js{color:var(--orange);border-color:oklch(0.72 0.14 55 / 0.2)}
+.commit-date{
+  font-size:var(--t0);color:var(--text-muted);margin-left:auto;
+  font-family:var(--mono);
+}
+
+/* FOOTER */
+.site-footer{
+  padding:1.5rem 2.5rem;text-align:center;
+  font-size:var(--t0);color:var(--text-muted);letter-spacing:0.03em;
+  border-top:1px solid var(--border-subtle);margin-top:1rem;
+}
+
+/* ANIMATIONS */
+@media(prefers-reduced-motion:reduce){
+  .project{animation:none;opacity:1;transform:none}
+  .progress-fill{transition:none}
+  .sprint-day,.project{transition:none}
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sprint-track{grid-template-columns:1fr 1fr}
+  .sprint-track .sprint-day:nth-child(5){grid-column:span 2}
+  .jules-card{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .site-header,.sprint,.tier-section,.projects,.site-footer,.jules-section,.heatmap-section,.stats-bar{
+    padding-left:1.25rem;padding-right:1.25rem;
+  }
+  .site-title{font-size:1.1rem}
+  .projects.tier-1,.projects.tier-2,.projects.tier-3{
+    grid-template-columns:1fr;
+  }
+  .sprint-track{grid-template-columns:1fr 1fr}
+  .sprint-track .sprint-day:nth-child(5){grid-column:span 2}
+  .heatmap-row{grid-template-columns:100px repeat(8,1fr) 30px}
+  .stats-bar{gap:1rem}
+}
+@media(max-width:480px){
+  .site-header,.sprint,.tier-section,.projects,.site-footer,.jules-section,.heatmap-section,.stats-bar{
+    padding-left:1rem;padding-right:1rem;
+  }
+  .site-title{font-size:1rem}
+  .project{padding:0.9rem 1rem}
+  .sprint-track{grid-template-columns:1fr}
+  .sprint-track .sprint-day:nth-child(5){grid-column:span 1}
+  .heatmap-row{grid-template-columns:80px repeat(8,1fr) 24px}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1 class="site-title">Sandy / Projects</h1>
+  <p class="site-subtitle">41 repos across GitHub (San20506)</p>
+</header>
+
+<div class="stats-bar" id="stats-bar"></div>
+
+<section class="sprint">
+  <div class="sprint-label">Sprint May 22-26</div>
+  <div class="sprint-track" id="sprint-track"></div>
+</section>
+
+<section class="heatmap-section">
+  <div class="heatmap-label">Commit Activity Last 30 Days</div>
+  <div id="heatmap"></div>
+</section>
+
+<section class="jules-section">
+  <div class="jules-card">
+    <div class="jules-info">
+      <div class="jules-title">
+        <span class="jules-icon">J</span>
+        Jules AI Integration
+      </div>
+      <div class="jules-desc">
+        Google Jules is a web-based AI coding agent that works autonomously on GitHub repos. It creates branches, writes code, and opens pull requests without local setup. FRIDAY can monitor Jules PRs and integrate results.
+      </div>
+      <ol class="jules-steps">
+        <li><span class="step-num">1</span>Sign in to <a href="https://jules.google.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">jules.google.com</a> with Google account</li>
+        <li><span class="step-num">2</span>Click "Connect to GitHub" and authorize San20506</li>
+        <li><span class="step-num">3</span>Select repos for Jules to access (start with Stark, CognitiveSync)</li>
+        <li><span class="step-num">4</span>Assign tasks via Jules web interface; it creates PRs autonomously</li>
+        <li><span class="step-num">5</span>Monitor via <code style="color:var(--accent);font-family:var(--mono);font-size:0.9em">gh pr list --author=jules[bot]</code></li>
+      </ol>
+    </div>
+    <div class="jules-status">
+      <div class="jules-status-title">Connection Status</div>
+      <div class="jules-status-item">
+        <span class="status-label">Google Account</span>
+        <span class="status-value status-pending">m.santhosh200506@gmail.com</span>
+      </div>
+      <div class="jules-status-item">
+        <span class="status-label">GitHub Connected</span>
+        <span class="status-value status-pending">Pending</span>
+      </div>
+      <div class="jules-status-item">
+        <span class="status-label">Repos Accessible</span>
+        <span class="status-value status-inactive">Not configured</span>
+      </div>
+      <div class="jules-status-item">
+        <span class="status-label">FRIDAY Monitoring</span>
+        <span class="status-value status-ready">Active (gh CLI)</span>
+      </div>
+      <div class="jules-status-item">
+        <span class="status-label">CLI / API</span>
+        <span class="status-value status-inactive">Not available yet</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="app"></div>
+
+<footer class="site-footer">
+  Last refreshed <span id="ts"></span>
+</footer>
+
+<script>
+/* ─── DATA ─── */
+const STATS = [
+  {label:"Total repos",value:"41"},
+  {label:"Active",value:"8"},
+  {label:"Needs push",value:"3"},
+  {label:"Stale",value:"30"}
+];
+
+const HEATMAP = [
+  {repo:"honcho",        w:[5,6,7,5,4,8,5],total:40},
+  {repo:"CognitiveSync", w:[2,2,3,1,3,2,2],total:15},
+  {repo:"AgenticOS",     w:[2,2,1,3,3,2,1],total:14},
+  {repo:"Stark",         w:[0,0,1,0,1,0,0],total:2},
+  {repo:"A.R.I.A",       w:[0,1,0,0,1,0,0],total:2},
+  {repo:"Pragma",        w:[0,0,0,1,0,0,0],total:1},
+  {repo:"PA (LAPA)",      w:[0,0,0,0,1,0,0],total:1},
+  {repo:"HyprAgent",      w:[0,0,1,0,0,0,0],total:1}
+];
+
+const P1 = [
+  {name:"CognitiveSync",
+   repo:{url:"github.com/San20506/CognitiveSync",link:true},
+   status:"active",needsPush:false,
+   milestone:"SHAP interpretability + frontend sprint",
+   progress:40,commits:15,
+   tech:[{t:"Python",c:"lang-python"},{t:"FastAPI"},{t:"PyG"}],
+   commit:"May 22"},
+  {name:"Stark",
+   repo:{url:"github.com/San20506/Stark",link:true},
+   status:"active",needsPush:false,
+   milestone:"Neuro-memory phase integration",
+   progress:55,
+   tech:[{t:"Python",c:"lang-python"},{t:"Ollama"},{t:"ChromaDB"}],
+   commit:"May 21"},
+  {name:"honcho",
+   repo:{url:"github.com/plastic-labs/honcho",link:true},
+   status:"active",needsPush:false,
+   milestone:"Core API development (upstream)",
+   progress:65,commits:40,
+   tech:[{t:"Python",c:"lang-python"},{t:"FastAPI"},{t:"Redis"}],
+   commit:"May 20"}
+];
+
+const P2 = [
+  {name:"AgenticOS",
+   repo:{url:"No remote yet",link:false},
+   status:"planning",needsPush:true,
+   milestone:"Initial push to GitHub remote",
+   progress:5,
+   tech:[{t:"YAML/MD"}],
+   commit:"Apr 29"},
+  {name:"Pragma",
+   repo:{url:"github.com/San20506/Pragma",link:true},
+   status:"active",needsPush:false,
+   milestone:"Architecture scaffold",
+   progress:20,commits:1,
+   tech:[{t:"Python",c:"lang-python"},{t:"NextJS"},{t:"Fastify"}],
+   commit:"May 19"},
+  {name:"Portfolio",
+   repo:{url:"github.com/San20506/Portfolio",link:true},
+   status:"active",needsPush:false,
+   milestone:"Add project cards, performance audit",
+   progress:50,
+   tech:[{t:"TypeScript",c:"lang-ts"},{t:"Next.js"},{t:"Tailwind"}],
+   commit:"Feb 25"},
+  {name:"Eien",
+   repo:{url:"github.com/San20506/Eien",link:true},
+   status:"active",needsPush:false,
+   milestone:"Bug triage and patch cycle",
+   progress:30,
+   tech:[{t:"Python",c:"lang-python"},{t:"Ollama"},{t:"aiosqlite"}],
+   commit:"Mar 26"},
+  {name:"vendorflow-hub",
+   repo:{url:"github.com/San20506/vendorflow-hub",link:true},
+   status:"active",needsPush:false,
+   milestone:"Dashboard and vendor APIs",
+   progress:25,
+   tech:[{t:"TypeScript",c:"lang-ts"},{t:"Next.js"}],
+   commit:"Apr 26"}
+];
+
+const P3 = [
+  {name:"A.R.I.A",
+   repo:{url:"github.com/San20506/ARIA",link:true},
+   status:"stale",needsPush:true,
+   milestone:"Decide: fold into Stark or continue standalone",
+   progress:15,
+   tech:[{t:"Python",c:"lang-python"},{t:"Pydantic"},{t:"aiohttp"}],
+   commit:"May 1"},
+  {name:"HyprAgent",
+   repo:{url:"Porting into Stark",link:false},
+   status:"stale",needsPush:true,
+   milestone:"Merge desktop loop into Stark agents/",
+   progress:70,
+   tech:[{t:"Python",c:"lang-python"},{t:"MCP protocol"}],
+   commit:"Archived"},
+  {name:"SOMA",
+   repo:{url:"Folding into Stark",link:false},
+   status:"stale",needsPush:false,
+   milestone:"Archive and port Obsidian structure",
+   progress:90,
+   tech:[{t:"Python",c:"lang-python"},{t:"SQLite"},{t:"Discord.py"}],
+   commit:"Archived"},
+  {name:"PA",
+   repo:{url:"github.com/San20506/LAPA",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Evaluate merge into Stark as assistant module",
+   progress:45,
+   tech:[{t:"Python",c:"lang-python"},{t:"Ollama"},{t:"ChromaDB"}],
+   commit:"May 1"},
+  {name:"M.M.T.F",
+   repo:{url:"github.com/San20506/stock-price-predictor",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Stock predictor shelved, needs data pipeline",
+   progress:10,
+   tech:[{t:"JavaScript",c:"lang-js"},{t:"PyTorch"},{t:"LSTM"}],
+   commit:"Apr 17"},
+  {name:"Resistrack",
+   repo:{url:"github.com/San20506/Resistrack",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Research tracker, low priority",
+   progress:15,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Apr 18"},
+  {name:"deepchem",
+   repo:{url:"github.com/San20506/deepchem",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Fork, upstream contributions paused",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"media-memory",
+   repo:{url:"github.com/San20506/media-memory",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Multimodal search, on hold",
+   progress:20,
+   tech:[{t:"Python",c:"lang-python"},{t:"ChromaDB"},{t:"Gemini"}],
+   commit:"Mar 30"},
+  {name:"ralph-general",
+   repo:{url:"github.com/San20506/ralph-general",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Autonomous loop experiment, archived",
+   progress:10,
+   tech:[{t:"Shell",c:"lang-shell"}],
+   commit:"Mar 30"},
+  {name:"crush",
+   repo:{url:"github.com/San20506/crush",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Agentic coding fork, exploratory",
+   progress:5,
+   tech:[{t:"Go",c:"lang-go"}],
+   commit:"Mar 30"},
+  {name:"Datamortem",
+   repo:{url:"github.com/San20506/Datamortem",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Data analysis experiment",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"Farm2bag-product-scanner",
+   repo:{url:"github.com/San20506/Farm2bag-product-scanner",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Product scanner prototype",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"P-2---File-Organizer",
+   repo:{url:"github.com/San20506/P-2---File-Organizer",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Utility script, archived",
+   progress:20,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 11"},
+  {name:"zeroclaw-archieve",
+   repo:{url:"github.com/San20506/zeroclaw-archieve",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Archive of upstream repo",
+   progress:5,
+   tech:[{t:"Rust",c:"lang-rust"}],
+   commit:"Mar 30"},
+  {name:"Aesthetica-Decoder",
+   repo:{url:"github.com/San20506/Aesthetica-Decoder",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Aesthetic analysis experiment",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"Kahoot-local",
+   repo:{url:"github.com/San20506/Kahoot-local",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Quiz platform, one-off project",
+   progress:15,
+   tech:[{t:"JavaScript",c:"lang-js"},{t:"React"},{t:"Socket.io"}],
+   commit:"Mar 30"},
+  {name:"customer-churn-prediction",
+   repo:{url:"github.com/San20506/customer-churn-prediction",link:true},
+   status:"stale",needsPush:false,
+   milestone:"ML classification project",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"},{t:"scikit-learn"}],
+   commit:"Mar 30"},
+  {name:"Ghost-Yourself",
+   repo:{url:"github.com/San20506/Ghost-Yourself",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Privacy tool exploration",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"career-escape-velocity",
+   repo:{url:"github.com/San20506/career-escape-velocity",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Career tool experiment",
+   progress:5,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"Therapy-triage",
+   repo:{url:"github.com/San20506/Therapy-triage",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Health triage concept",
+   progress:5,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"pharma",
+   repo:{url:"github.com/San20506/pharma",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Pharma data project",
+   progress:5,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"Call-automation-Transcription-",
+   repo:{url:"github.com/San20506/Call-automation-Transcription-",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Transcription automation prototype",
+   progress:10,
+   tech:[{t:"Python"}],
+   commit:"Mar 30"},
+  {name:"thalos-ai",
+   repo:{url:"github.com/San20506/thalos-ai",link:true},
+   status:"stale",needsPush:false,
+   milestone:"AI project exploration",
+   progress:5,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"mini-project-builder",
+   repo:{url:"github.com/San20506/mini-project-builder",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Project scaffolding tool",
+   progress:10,
+   tech:[{t:"JavaScript",c:"lang-js"}],
+   commit:"Mar 30"},
+  {name:"medical-image-segmentation",
+   repo:{url:"github.com/San20506/medical-image-segmentation",link:true},
+   status:"stale",needsPush:false,
+   milestone:"U-Net segmentation study",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"},{t:"PyTorch"}],
+   commit:"Mar 30"},
+  {name:"rag-chatbot-langchain",
+   repo:{url:"github.com/San20506/rag-chatbot-langchain",link:true},
+   status:"stale",needsPush:false,
+   milestone:"LangChain RAG experiment",
+   progress:15,
+   tech:[{t:"Python",c:"lang-python"},{t:"LangChain"},{t:"FAISS"}],
+   commit:"Mar 30"},
+  {name:"sentiment-analysis-transformers",
+   repo:{url:"github.com/San20506/sentiment-analysis-transformers",link:true},
+   status:"stale",needsPush:false,
+   milestone:"BERT fine-tuning experiment",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"},{t:"Transformers"}],
+   commit:"Mar 30"},
+  {name:"yolo-object-detection-tracking",
+   repo:{url:"github.com/San20506/yolo-object-detection-tracking",link:true},
+   status:"stale",needsPush:false,
+   milestone:"YOLOv8 detection pipeline",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"},{t:"YOLOv8"}],
+   commit:"Mar 30"},
+  {name:"image-classification-transfer-learning",
+   repo:{url:"github.com/San20506/image-classification-transfer-learning",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Transfer learning study",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"},{t:"ResNet"}],
+   commit:"Mar 30"},
+  {name:"time-series-anomaly-detection",
+   repo:{url:"github.com/San20506/time-series-anomaly-detection",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Anomaly detection pipeline",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"},{t:"Isolation Forest"}],
+   commit:"Mar 30"},
+  {name:"offline-file-summarizer",
+   repo:{url:"github.com/San20506/offline-file-summarizer",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Local file summarizer",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"voice-task-manager",
+   repo:{url:"github.com/San20506/voice-task-manager",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Voice-controlled task tool",
+   progress:10,
+   tech:[{t:"Python",c:"lang-python"},{t:"NLP"}],
+   commit:"Mar 30"},
+  {name:"grocery-comparative-analytics-agent",
+   repo:{url:"github.com/San20506/grocery-comparative-analytics-agent",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Comparative analytics agent",
+   progress:5,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"academic-apex-project",
+   repo:{url:"github.com/San20506/academic-apex-project",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Academic project, archived",
+   progress:5,
+   tech:[{t:"Python",c:"lang-python"}],
+   commit:"Mar 30"},
+  {name:"medieval-rpg-landing",
+   repo:{url:"github.com/San20506/medieval-rpg-landing",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Landing page, one-off",
+   progress:20,
+   tech:[{t:"TypeScript",c:"lang-ts"},{t:"React"},{t:"Vite"}],
+   commit:"Mar 30"},
+  {name:"claude-code",
+   repo:{url:"github.com/San20506/claude-code",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Claude Code fork, experimental",
+   progress:5,
+   tech:[{t:"TypeScript",c:"lang-ts"}],
+   commit:"Apr 1"},
+  {name:"translatea2z.com",
+   repo:{url:"github.com/San20506/translatea2z.com",link:true},
+   status:"stale",needsPush:false,
+   milestone:"Freelance site, completed",
+   progress:60,
+   tech:[{t:"TypeScript",c:"lang-ts"}],
+   commit:"Nov 11"},
+  {name:"San20506",
+   repo:{url:"github.com/San20506/San20506",link:true},
+   status:"stale",needsPush:false,
+   milestone:"GitHub profile README",
+   progress:30,
+   tech:[{t:"Markdown"}],
+   commit:"Apr 13"}
+];
+
+const SPRINT = [
+  {date:"May 22",title:"CognitiveSync: SHAP Research",tag:"Research",tagClass:"research",today:true},
+  {date:"May 23",title:"Stark Consolidation Sprint",tag:"Sprint",tagClass:"sprint",today:false},
+  {date:"May 24",title:"Pragma: Architecture Planning",tag:"Planning",tagClass:"planning",today:false},
+  {date:"May 25",title:"Eien Bugs + AgenticOS Push",tag:"Dev",tagClass:"dev",today:false},
+  {date:"May 26",title:"Unisys Deadline",tag:"Deadline",tagClass:"deadline",today:false}
+];
+
+const TIERS = [
+  {label:"Priority",color:"var(--green)",projects:P1,cls:"tier-1"},
+  {label:"Active",color:"var(--accent)",projects:P2,cls:"tier-2"},
+  {label:"Stale / Archived",color:"var(--text-muted)",projects:P3,cls:"tier-3"}
+];
+
+/* ─── RENDER ─── */
+function renderStats(){
+  const bar = document.getElementById("stats-bar");
+  bar.innerHTML = STATS.map(s =>
+    `<div class="stat-item"><span class="stat-value">${s.value}</span><span class="stat-label">${s.label}</span></div>`
+  ).join("");
+}
+
+function renderHeatmap(){
+  const wrap = document.getElementById("heatmap");
+  const weekLabels = ["4w ago","3w ago","2w ago","1w ago","6d","3d","Now"];
+  const headerCells = weekLabels.map(l => `<div class="heatmap-row-header">${l}</div>`).join("");
+  const headRow = `<div class="heatmap-row"><div class="heatmap-repo" style="font-weight:600;color:var(--text-muted)">Repository</div>${headerCells}<div class="heatmap-row-header">30d</div></div>`;
+  const rows = HEATMAP.map(h => {
+    const cells = h.w.map(v => {
+      const cls = v === 0 ? "" : v <= 1 ? "l1" : v <= 3 ? "l2" : v <= 5 ? "l3" : "l4";
+      return `<div class="heatmap-cell ${cls}"></div>`;
+    }).join("");
+    const countColor = h.total === 0 ? "var(--text-muted)" : h.total >= 10 ? "var(--accent)" : "var(--text-secondary)";
+    return `<div class="heatmap-row"><div class="heatmap-repo">${h.repo}</div>${cells}<div class="heatmap-count" style="color:${countColor}">${h.total}</div></div>`;
+  }).join("");
+  wrap.innerHTML = `<div class="heatmap-grid">${headRow}${rows}</div>`;
+}
+
+function renderSprint(){
+  const track = document.getElementById("sprint-track");
+  track.innerHTML = SPRINT.map(e => `
+    <div class="sprint-day${e.today ? " is-today" : ""}">
+      <div class="day-date">${e.date}</div>
+      <div class="day-title">${e.title}</div>
+      <div class="day-tag ${e.tagClass}">${e.tag}</div>
+    </div>
+  `).join("");
+}
+
+function card(p,idx){
+  const repoHTML = p.repo.link
+    ? `<a href="https://${p.repo.url}" target="_blank" rel="noopener">${p.repo.url}</a>`
+    : p.repo.url;
+
+  const progressClass = p.status === "stale" ? "stale" : p.status === "planning" ? "planning" : "";
+
+  const techHTML = p.tech.map(t =>
+    `<span class="tech-tag${t.c ? " " + t.c : ""}">${t.t}</span>`
+  ).join("");
+
+  const needsPushBadge = p.needsPush
+    ? '<span class="badge needs-push">needs push</span>'
+    : "";
+
+  return `
+    <article class="project" style="animation-delay:${idx * 40}ms">
+      <div class="project-head">
+        <div class="project-name">${p.name}</div>
+        <div class="project-badges">
+          <span class="badge status-${p.status}">${p.status}</span>
+          ${needsPushBadge}
+        </div>
+      </div>
+      <div class="project-repo">${repoHTML}</div>
+      <div class="project-milestone">
+        <span class="ml-label">Next</span>
+        ${p.milestone}
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-track">
+          <div class="progress-fill ${progressClass}" style="width:${p.progress}%"></div>
+        </div>
+        <div class="progress-meta">
+          <span>${p.status === "stale" ? "archived" : "progress"}</span>
+          <span>${p.progress}%</span>
+        </div>
+      </div>
+      <div class="project-meta">
+        ${techHTML}
+        <span class="commit-date">${p.commit}</span>
+      </div>
+    </article>
+  `;
+}
+
+function render(){
+  const app = document.getElementById("app");
+  let globalIdx = 0;
+  app.innerHTML = TIERS.map(tier => {
+    const cards = tier.projects.map(p => {
+      const html = card(p, globalIdx);
+      globalIdx++;
+      return html;
+    }).join("");
+    return `
+      <section class="tier-section">
+        <div class="tier-header">
+          <span class="tier-dot" style="background:${tier.color}"></span>
+          <span class="tier-label">${tier.label}</span>
+          <span class="tier-count">${tier.projects.length}</span>
+        </div>
+      </section>
+      <div class="projects ${tier.cls}">${cards}</div>
+    `;
+  }).join("");
+
+  renderStats();
+  renderHeatmap();
+  renderSprint();
+  document.getElementById("ts").textContent = new Date().toLocaleDateString("en-US",{
+    month:"short",day:"numeric",year:"numeric",hour:"2-digit",minute:"2-digit"
+  });
+}
+
+render();
+</script>
+</body>
+</html>
