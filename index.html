@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#17171f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<title>Sandy / Projects</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-surface:oklch(0.13 0.015 280);
+  --bg-raised:oklch(0.16 0.017 280);
+  --bg-elevated:oklch(0.19 0.019 280);
+  --bg-hover:oklch(0.22 0.021 280);
+  --border-subtle:oklch(0.24 0.02 280);
+  --border-default:oklch(0.29 0.024 280);
+  --text-primary:oklch(0.88 0.02 280);
+  --text-secondary:oklch(0.68 0.024 280);
+  --text-muted:oklch(0.48 0.02 280);
+  --accent:oklch(0.72 0.16 250);
+  --accent-muted:oklch(0.72 0.16 250 / 0.12);
+  --accent-hover:oklch(0.78 0.16 250);
+  --green:oklch(0.72 0.16 145);
+  --green-muted:oklch(0.72 0.16 145 / 0.12);
+  --yellow:oklch(0.78 0.15 85);
+  --yellow-muted:oklch(0.78 0.15 85 / 0.12);
+  --red:oklch(0.68 0.18 25);
+  --red-muted:oklch(0.68 0.18 25 / 0.12);
+  --violet:oklch(0.68 0.16 310);
+  --violet-muted:oklch(0.68 0.16 310 / 0.12);
+  --orange:oklch(0.72 0.14 55);
+  --orange-muted:oklch(0.72 0.14 55 / 0.12);
+  --teal:oklch(0.72 0.1 180);
+  --teal-muted:oklch(0.72 0.1 180 / 0.12);
+  --radius:8px;
+  --radius-lg:12px;
+  --mono:'SF Mono','JetBrains Mono','Fira Code',ui-monospace,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',system-ui,sans-serif;
+  --t0:0.58rem;--t1:0.68rem;--t2:0.78rem;--t3:0.88rem;--t4:1rem;--t5:1.2rem;
+}
+html{font-size:15px;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg-surface);color:var(--text-primary);
+  font-family:var(--sans);line-height:1.5;min-height:100vh;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+
+.site-header{padding:2rem 2.5rem 1.5rem;position:relative}
+.site-header::after{content:'';position:absolute;bottom:0;left:2.5rem;right:2.5rem;height:1px;background:var(--border-subtle)}
+.site-title{font-size:var(--t5);font-weight:650;letter-spacing:-0.02em;display:flex;align-items:center;gap:0.75rem}
+.refresh-dot{width:8px;height:8px;border-radius:50%;background:var(--green);transition:background 0.2s;flex-shrink:0}
+.refresh-dot.stale{background:var(--yellow)}
+.refresh-dot.error{background:var(--red)}
+.site-subtitle{font-size:var(--t1);color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;font-weight:500;margin-top:0.25rem}
+
+.stats-bar{display:flex;gap:1.5rem;padding:0.85rem 2.5rem;border-bottom:1px solid var(--border-subtle);flex-wrap:wrap}
+.stat-item{display:flex;align-items:baseline;gap:0.4rem}
+.stat-value{font-size:var(--t4);font-weight:700;font-family:var(--mono)}
+.stat-label{font-size:var(--t0);color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600}
+
+.sprint{padding:1.25rem 2.5rem;position:relative}
+.sprint::after{content:'';position:absolute;bottom:0;left:2.5rem;right:2.5rem;height:1px;background:var(--border-subtle)}
+.sprint-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem}
+.sprint-label{font-size:var(--t0);text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600}
+.countdown{display:flex;align-items:center;gap:0.4rem}
+.countdown-clock{font-family:var(--mono);font-size:var(--t2);font-weight:600;color:var(--orange);letter-spacing:0.02em}
+.countdown-label{font-size:var(--t0);color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600}
+.sprint-track{display:grid;grid-template-columns:repeat(5,1fr);gap:0.5rem}
+.sprint-day{padding:0.65rem 0.85rem;background:var(--bg-raised);border:1px solid var(--border-subtle);border-radius:var(--radius);transition:border-color 0.15s ease-out,background 0.15s ease-out;cursor:default}
+.sprint-day:hover{border-color:var(--border-default);background:var(--bg-hover)}
+.sprint-day.is-today{border-color:var(--accent);background:var(--accent-muted)}
+.day-date{font-size:var(--t0);color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase;font-weight:600}
+.sprint-day.is-today .day-date{color:var(--accent)}
+.day-title{font-size:var(--t2);font-weight:500;color:var(--text-primary);margin-top:0.15rem;line-height:1.3}
+.day-tag{display:inline-block;font-size:0.55rem;letter-spacing:0.06em;text-transform:uppercase;font-weight:700;margin-top:0.3rem;padding:0.12rem 0.4rem;border-radius:3px}
+.sprint-day.is-today .day-tag{background:var(--accent-muted);color:var(--accent)}
+.day-tag.research{background:var(--violet-muted);color:var(--violet)}
+.day-tag.sprint{background:var(--green-muted);color:var(--green)}
+.day-tag.planning{background:var(--yellow-muted);color:var(--yellow)}
+.day-tag.dev{background:var(--orange-muted);color:var(--orange)}
+.day-tag.deadline{background:var(--red-muted);color:var(--red)}
+
+.timeline-section{padding:1.25rem 2.5rem;position:relative}
+.timeline-section::after{content:'';position:absolute;bottom:0;left:2.5rem;right:2.5rem;height:1px;background:var(--border-subtle)}
+.timeline-label{font-size:var(--t0);text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;margin-bottom:0.75rem}
+.timeline-list{list-style:none}
+.timeline-item{display:grid;grid-template-columns:120px 1fr;gap:0.75rem;padding:0.55rem 0;border-bottom:1px solid var(--border-subtle);transition:background 0.15s}
+.timeline-item:last-child{border-bottom:none}
+.timeline-item:hover{background:var(--bg-raised);border-radius:var(--radius);margin:0 -0.5rem;padding-left:0.5rem;padding-right:0.5rem}
+.timeline-time{font-size:var(--t0);color:var(--text-muted);font-family:var(--mono);letter-spacing:0.02em;padding-top:0.15rem;white-space:nowrap}
+.timeline-body{display:flex;align-items:baseline;gap:0.5rem;flex-wrap:wrap;min-width:0}
+.timeline-hash{font-family:var(--mono);font-size:var(--t1);color:var(--accent);flex-shrink:0}
+.timeline-msg{font-size:var(--t2);color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.timeline-repo{font-size:var(--t0);color:var(--text-muted);font-family:var(--mono);letter-spacing:0.02em;flex-shrink:0}
+
+.jules-section{padding:1.5rem 2.5rem;position:relative}
+.jules-section::after{content:'';position:absolute;bottom:0;left:2.5rem;right:2.5rem;height:1px;background:var(--border-subtle)}
+.jules-title{font-size:var(--t4);font-weight:600;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem}
+.jules-icon{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:5px;background:var(--accent-muted);color:var(--accent);font-size:var(--t1);font-weight:700}
+.jules-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.jules-sessions{display:flex;flex-direction:column;gap:0.5rem}
+.jules-sessions-heading{font-size:var(--t1);text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);font-weight:600;margin-bottom:0.25rem}
+.jules-session{display:flex;align-items:center;justify-content:space-between;gap:0.5rem;padding:0.5rem 0.75rem;background:var(--bg-raised);border:1px solid var(--border-subtle);border-radius:var(--radius);transition:border-color 0.15s}
+.jules-session:hover{border-color:var(--border-default)}
+.jules-session-repo{font-size:var(--t2);color:var(--text-primary);font-weight:500}
+.jules-badge{font-size:0.55rem;letter-spacing:0.06em;text-transform:uppercase;font-weight:700;padding:0.15rem 0.45rem;border-radius:50px;line-height:1.1}
+.jules-badge.idle{background:var(--yellow-muted);color:var(--yellow)}
+.jules-badge.running{background:var(--green-muted);color:var(--green)}
+.jules-badge.done{background:var(--accent-muted);color:var(--accent)}
+.jules-badge.error{background:var(--red-muted);color:var(--red)}
+.jules-badge.none{background:var(--bg-elevated);color:var(--text-muted)}
+.jules-status{background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:1rem 1.15rem}
+.jules-status-title{font-size:var(--t1);text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);font-weight:600;margin-bottom:0.65rem}
+.jules-status-item{display:flex;justify-content:space-between;align-items:center;padding:0.35rem 0;border-bottom:1px solid var(--border-subtle);font-size:var(--t2);color:var(--text-secondary)}
+.jules-status-item:last-child{border-bottom:none}
+.status-label{color:var(--text-secondary)}
+.status-value{font-family:var(--mono);font-size:var(--t1)}
+.status-ready{color:var(--green)}
+.status-pending{color:var(--yellow)}
+.status-inactive{color:var(--text-muted)}
+
+.heatmap-section{padding:1.25rem 2.5rem;position:relative}
+.heatmap-section::after{content:'';position:absolute;bottom:0;left:2.5rem;right:2.5rem;height:1px;background:var(--border-subtle)}
+.heatmap-label{font-size:var(--t0);text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;margin-bottom:0.75rem}
+.heatmap-grid{display:flex;flex-direction:column;gap:0.35rem}
+.heatmap-row{display:grid;grid-template-columns:120px repeat(7,1fr) 36px;gap:4px;align-items:center}
+.heatmap-row-header{font-size:var(--t0);color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;text-align:center}
+.heatmap-repo{font-size:var(--t1);color:var(--text-secondary);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.heatmap-cell{height:16px;border-radius:3px;background:var(--bg-elevated);transition:background 0.15s}
+.heatmap-cell.l1{background:oklch(0.22 0.06 250 / 0.6)}
+.heatmap-cell.l2{background:oklch(0.40 0.12 250 / 0.7)}
+.heatmap-cell.l3{background:oklch(0.55 0.14 250 / 0.85)}
+.heatmap-cell.l4{background:oklch(0.72 0.16 250)}
+.heatmap-count{font-size:var(--t0);color:var(--text-muted);font-family:var(--mono);text-align:right}
+
+.tier-section{padding:1.5rem 2.5rem 0.5rem}
+.tier-header{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.65rem}
+.tier-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tier-label{font-size:var(--t0);text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600}
+.tier-count{font-size:var(--t0);color:var(--text-muted);font-family:var(--mono);margin-left:0.25rem}
+
+.projects{padding:0 2.5rem 1.5rem;display:grid;gap:0.65rem}
+.projects.tier-1{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.projects.tier-2{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.projects.tier-3{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+
+.project{background:var(--bg-raised);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:1.15rem 1.3rem;display:flex;flex-direction:column;gap:0.65rem;transition:border-color 0.15s,box-shadow 0.15s;position:relative;opacity:0;transform:translateY(6px);animation:cardIn 0.25s ease-out forwards}
+.project:hover{border-color:var(--border-default);box-shadow:0 1px 8px oklch(0 0 0 / 0.2)}
+@keyframes cardIn{to{opacity:1;transform:translateY(0)}}
+.project-head{display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem}
+.project-name{font-size:var(--t4);font-weight:600;letter-spacing:-0.01em;line-height:1.2}
+.project-badges{display:flex;gap:0.3rem;align-items:center;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-size:0.55rem;letter-spacing:0.06em;text-transform:uppercase;font-weight:700;padding:0.15rem 0.45rem;border-radius:50px;line-height:1.1}
+.badge.status-active{background:var(--green-muted);color:var(--green)}
+.badge.status-planning{background:var(--yellow-muted);color:var(--yellow)}
+.badge.status-idle{background:var(--accent-muted);color:var(--accent)}
+.badge.status-stale{background:var(--red-muted);color:var(--red)}
+.badge.needs-push{background:var(--orange-muted);color:var(--orange)}
+.project-repo{font-size:var(--t1);color:var(--text-muted);font-family:var(--mono);line-height:1.3}
+.project-repo a{color:var(--text-muted);text-decoration:none;transition:color 0.15s}
+.project-repo a:hover{color:var(--accent)}
+.project-meta-row{display:flex;align-items:center;gap:0.5rem;font-size:var(--t1);color:var(--text-secondary)}
+.project-meta-row .branch{font-family:var(--mono);color:var(--text-muted);font-size:var(--t0)}
+.project-stats{display:flex;gap:1rem;font-size:var(--t0);color:var(--text-muted);font-family:var(--mono)}
+.commit-bar{height:3px;background:var(--bg-elevated);border-radius:2px;overflow:hidden;margin-top:0.15rem}
+.commit-bar-fill{height:100%;border-radius:2px;background:var(--accent);transition:width 0.5s ease-out}
+.commit-bar-fill.high{background:var(--green)}
+.commit-bar-fill.medium{background:var(--yellow)}
+.progress-meta{display:flex;justify-content:space-between;font-size:var(--t0);color:var(--text-muted);margin-top:0.15rem;font-family:var(--mono);letter-spacing:0.02em}
+.project-meta{display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;margin-top:auto}
+.tech-tag{font-size:0.58rem;font-weight:600;letter-spacing:0.02em;padding:0.15rem 0.4rem;border-radius:3px;background:var(--bg-elevated);color:var(--text-muted);border:1px solid var(--border-subtle);font-family:var(--mono)}
+
+.refresh-bar{position:fixed;top:0;left:0;right:0;height:2px;z-index:100;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s}
+.refresh-bar.active{animation:refreshProgress 5s linear forwards}
+@keyframes refreshProgress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+.site-footer{padding:1.5rem 2.5rem;text-align:center;font-size:var(--t0);color:var(--text-muted);letter-spacing:0.03em;border-top:1px solid var(--border-subtle);margin-top:1rem}
+.footer-refresh{display:inline-flex;align-items:center;gap:0.35rem;margin-top:0.3rem}
+.footer-refresh button{background:none;border:1px solid var(--border-default);color:var(--text-secondary);font-size:var(--t0);padding:0.2rem 0.6rem;border-radius:var(--radius);cursor:pointer;font-family:var(--mono);transition:background 0.15s,color 0.15s,border-color 0.15s}
+.footer-refresh button:hover{background:var(--bg-hover);color:var(--text-primary);border-color:var(--text-muted)}
+.footer-refresh button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+@media(prefers-reduced-motion:reduce){
+  .project{animation:none;opacity:1;transform:none}
+  .commit-bar-fill{transition:none}
+  .sprint-day,.project{transition:none}
+  .refresh-bar{animation:none}
+}
+
+@media(max-width:1080px){.jules-grid{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .sprint-track{grid-template-columns:1fr 1fr}
+  .sprint-track .sprint-day:nth-child(5){grid-column:span 2}
+  .timeline-item{grid-template-columns:90px 1fr}
+}
+@media(max-width:768px){
+  .site-header,.sprint,.tier-section,.projects,.site-footer,.jules-section,.heatmap-section,.stats-bar,.timeline-section{padding-left:1.25rem;padding-right:1.25rem}
+  .site-title{font-size:1.1rem}
+  .projects.tier-1,.projects.tier-2,.projects.tier-3{grid-template-columns:1fr}
+  .sprint-track{grid-template-columns:1fr 1fr}
+  .sprint-track .sprint-day:nth-child(5){grid-column:span 2}
+  .heatmap-row{grid-template-columns:90px repeat(7,1fr) 30px}
+  .stats-bar{gap:1rem}
+  .timeline-item{grid-template-columns:70px 1fr}
+}
+@media(max-width:480px){
+  .site-header,.sprint,.tier-section,.projects,.site-footer,.jules-section,.heatmap-section,.stats-bar,.timeline-section{padding-left:1rem;padding-right:1rem}
+  .site-title{font-size:1rem}
+  .project{padding:0.9rem 1rem}
+  .sprint-track{grid-template-columns:1fr}
+  .sprint-track .sprint-day:nth-child(5){grid-column:span 1}
+  .heatmap-row{grid-template-columns:70px repeat(7,1fr) 24px}
+  .sprint-header{flex-direction:column;align-items:flex-start}
+  .timeline-item{grid-template-columns:1fr}
+  .timeline-time{display:none}
+  .timeline-body{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div class="refresh-bar" id="refresh-bar"></div>
+
+<header class="site-header">
+  <h1 class="site-title">
+    <span class="refresh-dot" id="status-dot" title="Data status"></span>
+    <span id="site-title-text">Sandy / Projects</span>
+  </h1>
+  <p class="site-subtitle" id="site-subtitle">Loading...</p>
+</header>
+
+<div class="stats-bar" id="stats-bar">
+  <div class="stat-item"><span class="stat-value" style="color:var(--text-muted)">--</span></div>
+</div>
+
+<section class="sprint">
+  <div class="sprint-header">
+    <div class="sprint-label" id="sprint-label">Sprint</div>
+    <div class="countdown">
+      <span class="countdown-label" id="countdown-label">Deadline</span>
+      <span class="countdown-clock" id="countdown-clock">--:--:--</span>
+    </div>
+  </div>
+  <div class="sprint-track" id="sprint-track"></div>
+</section>
+
+<section class="timeline-section">
+  <div class="timeline-label">Recent Activity</div>
+  <ul class="timeline-list" id="timeline"></ul>
+</section>
+
+<section class="jules-section">
+  <div class="jules-title">
+    <span class="jules-icon">J</span>
+    Jules AI Integration
+  </div>
+  <div class="jules-grid" id="jules-grid"></div>
+</section>
+
+<section class="heatmap-section">
+  <div class="heatmap-label">Commit Activity Last 30 Days</div>
+  <div id="heatmap"></div>
+</section>
+
+<div id="app"></div>
+
+<footer class="site-footer">
+  <div>Last refreshed <span id="ts">...</span></div>
+  <div class="footer-refresh">
+    <button id="refresh-btn" type="button">Refresh now</button>
+    <span>Auto-refresh every 5 min</span>
+  </div>
+</footer>
+
+<script>
+/* ─── PROJECT METADATA FALLBACK ─── */
+const PROJECT_META = {
+  "CognitiveSync": { tier:1, status:"active", milestone:"SHAP interpretability + frontend sprint", progress:40, tech:[{t:"Python",c:"lang-python"},{t:"FastAPI"},{t:"PyG"}] },
+  "Stark": { tier:1, status:"active", milestone:"Neuro-memory phase integration", progress:55, tech:[{t:"Python",c:"lang-python"},{t:"Ollama"},{t:"ChromaDB"}] },
+  "honcho": { tier:1, status:"active", milestone:"Core API development (upstream)", progress:65, tech:[{t:"Python",c:"lang-python"},{t:"FastAPI"},{t:"Redis"}] },
+  "AgenticOS": { tier:2, status:"planning", needsPush:true, milestone:"Initial push to GitHub remote", progress:5, tech:[{t:"YAML/MD"}] },
+  "Pragma": { tier:2, status:"active", milestone:"Architecture scaffold", progress:20, tech:[{t:"Python",c:"lang-python"},{t:"NextJS"},{t:"Fastify"}] },
+  "Portfolio": { tier:2, status:"idle", milestone:"Add project cards, performance audit", progress:50, tech:[{t:"TypeScript",c:"lang-ts"},{t:"Next.js"},{t:"Tailwind"}] },
+  "Eien": { tier:2, status:"idle", milestone:"Bug triage and patch cycle", progress:30, tech:[{t:"Python",c:"lang-python"},{t:"Ollama"},{t:"aiosqlite"}] },
+  "vendorflow-hub": { tier:2, status:"idle", milestone:"Dashboard and vendor APIs", progress:25, tech:[{t:"TypeScript",c:"lang-ts"},{t:"Next.js"}] },
+  "A.R.I.A": { tier:3, status:"stale", needsPush:true, milestone:"Fold into Stark or continue standalone", progress:15, tech:[{t:"Python",c:"lang-python"},{t:"Pydantic"},{t:"aiohttp"}] },
+  "HyprAgent": { tier:3, status:"stale", needsPush:true, milestone:"Merge into Stark agents/", progress:70, tech:[{t:"Python",c:"lang-python"},{t:"MCP protocol"}] },
+  "PA": { tier:3, status:"stale", milestone:"Evaluate merge into Stark", progress:45, tech:[{t:"Python",c:"lang-python"},{t:"Ollama"},{t:"ChromaDB"}] },
+};
+const DEFAULT_META = { tier:3, status:"stale", milestone:"", progress:5, tech:[] };
+
+const SPRINT_DAYS = [
+  {date:"May 22",title:"CognitiveSync: SHAP Research",tag:"Research",tagClass:"research"},
+  {date:"May 23",title:"Stark Consolidation Sprint",tag:"Sprint",tagClass:"sprint"},
+  {date:"May 24",title:"Pragma: Architecture Planning",tag:"Planning",tagClass:"planning"},
+  {date:"May 25",title:"Eien Bugs + AgenticOS Push",tag:"Dev",tagClass:"dev"},
+  {date:"May 26",title:"Unisys Deadline",tag:"Deadline",tagClass:"deadline"}
+];
+
+const JULES_INFO = {
+  account:"m.santhosh200506@gmail.com",
+  githubConnected:false,
+  fridayMonitoring:"Active (gh CLI)",
+  cliApi:"Not available yet"
+};
+
+/* ─── STATE ─── */
+let DATA = null;
+let countdownInterval = null;
+let refreshTimeout = null;
+const REFRESH_INTERVAL = 5 * 60 * 1000;
+
+/* ─── HELPERS ─── */
+function timeAgo(iso) {
+  const d = new Date(iso);
+  const now = new Date();
+  const diffMs = now - d;
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 1) return "just now";
+  if (diffMins < 60) return diffMins + "m ago";
+  const diffHrs = Math.floor(diffMins / 60);
+  if (diffHrs < 24) return diffHrs + "h ago";
+  const diffDays = Math.floor(diffHrs / 24);
+  if (diffDays < 30) return diffDays + "d ago";
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+/* ─── DATA LOADING ─── */
+async function loadData() {
+  const bar = document.getElementById('refresh-bar');
+  const dot = document.getElementById('status-dot');
+  bar.classList.add('active');
+  try {
+    const res = await fetch('data.json?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    DATA = await res.json();
+    dot.className = 'refresh-dot';
+    render();
+    startCountdown();
+  } catch(e) {
+    console.error('Failed to load data.json:', e);
+    dot.className = 'refresh-dot error';
+    if (!DATA) document.getElementById('site-subtitle').textContent = 'Failed to load data';
+  }
+  bar.classList.remove('active');
+  document.getElementById('ts').textContent = new Date().toLocaleDateString('en-US',{
+    month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'
+  });
+  clearTimeout(refreshTimeout);
+  refreshTimeout = setTimeout(loadData, REFRESH_INTERVAL);
+}
+
+/* ─── COUNTDOWN ─── */
+function startCountdown() {
+  if (!DATA || !DATA.sprint_metadata) return;
+  clearInterval(countdownInterval);
+  const dl = DATA.sprint_metadata.deadlines && DATA.sprint_metadata.deadlines[0];
+  if (!dl) return;
+  const deadline = new Date(dl.date + 'T23:59:00');
+  const label = document.getElementById('countdown-label');
+  label.textContent = dl.name + ' deadline';
+  function tick() {
+    const diff = deadline - new Date();
+    if (diff <= 0) {
+      document.getElementById('countdown-clock').textContent = 'PASSED';
+      document.getElementById('countdown-clock').style.color = 'var(--red)';
+      clearInterval(countdownInterval);
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    const parts = [];
+    if (d > 0) parts.push(d + 'd');
+    parts.push(String(h).padStart(2,'0'), String(m).padStart(2,'0'), String(s).padStart(2,'0'));
+    const el = document.getElementById('countdown-clock');
+    el.textContent = parts.join(' ');
+    el.style.color = d <= 1 ? 'var(--red)' : d <= 3 ? 'var(--orange)' : 'var(--orange)';
+  }
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+/* ─── RENDER ─── */
+function render() {
+  if (!DATA || !DATA.repos) return;
+  const repos = DATA.repos;
+  document.getElementById('site-title-text').textContent = 'Sandy / Projects';
+  document.getElementById('site-subtitle').textContent = repos.length + ' repos across GitHub (San20506)';
+  document.getElementById('sprint-label').textContent = DATA.sprint_metadata ? DATA.sprint_metadata.current_sprint + ' Sprint' : 'Sprint';
+  renderStats(repos);
+  renderSprint();
+  renderTimeline(repos);
+  renderJules(repos);
+  renderHeatmap(repos);
+  renderProjects(repos);
+  markToday();
+}
+
+function renderStats(repos) {
+  const active = repos.filter(r => r.health === 'active').length;
+  const idle = repos.filter(r => r.health === 'idle').length;
+  const stale = repos.filter(r => r.health === 'stale').length;
+  const needsPush = repos.filter(r => r.remote_url === 'none').length;
+  const bar = document.getElementById('stats-bar');
+  bar.innerHTML = [
+    {label:'Total repos',value:repos.length},
+    {label:'Active',value:active},
+    {label:'Idle',value:idle},
+    {label:'No remote',value:needsPush},
+  ].map(s => `<div class="stat-item"><span class="stat-value">${s.value}</span><span class="stat-label">${s.label}</span></div>`).join('');
+}
+
+function renderSprint() {
+  const track = document.getElementById('sprint-track');
+  track.innerHTML = SPRINT_DAYS.map(e => `
+    <div class="sprint-day">
+      <div class="day-date">${e.date}</div>
+      <div class="day-title">${e.title}</div>
+      <div class="day-tag ${e.tagClass}">${e.tag}</div>
+    </div>
+  `).join('');
+}
+
+function markToday() {
+  const now = new Date();
+  const dayEls = document.querySelectorAll('.sprint-day');
+  SPRINT_DAYS.forEach((d, i) => {
+    const parsed = new Date(d.date + ' ' + now.getFullYear());
+    if (parsed.toDateString() === now.toDateString() && dayEls[i]) {
+      dayEls[i].classList.add('is-today');
+    }
+  });
+}
+
+function renderTimeline(repos) {
+  const list = document.getElementById('timeline');
+  const sorted = [...repos].sort((a,b) => new Date(b.last_commit) - new Date(a.last_commit)).slice(0, 10);
+  if (!sorted.length) {
+    list.innerHTML = '<li style="font-size:var(--t2);color:var(--text-muted);padding:0.5rem 0">No recent activity</li>';
+    return;
+  }
+  list.innerHTML = sorted.map(r => {
+    const d = new Date(r.last_commit);
+    const timeStr = d.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' ' +
+                    d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
+    const hash = r.last_commit ? r.last_commit.slice(0,7) : '---';
+    return `
+      <li class="timeline-item">
+        <span class="timeline-time">${timeStr}</span>
+        <div class="timeline-body">
+          <span class="timeline-hash">${hash}</span>
+          <span class="timeline-msg">${r.branch}</span>
+          <span class="timeline-repo">${r.name}</span>
+        </div>
+      </li>
+    `;
+  }).join('');
+}
+
+function renderJules(repos) {
+  const grid = document.getElementById('jules-grid');
+  const julesRepos = repos.filter(r => r.jules_status && r.jules_status !== 'none');
+  const j = JULES_INFO;
+  const ghCls = j.githubConnected ? 'status-ready' : 'status-pending';
+  const ghTxt = j.githubConnected ? 'Connected' : 'Pending';
+  const cliCls = (j.cliApi && j.cliApi !== 'Not available yet') ? 'status-ready' : 'status-inactive';
+
+  const sessHTML = julesRepos.length ? julesRepos.map(r => {
+    const cls = 'jules-badge ' + r.jules_status;
+    const label = r.jules_status === 'running' ? 'Running' : r.jules_status === 'done' ? 'Completed' : r.jules_status === 'error' ? 'Error' : 'Idle';
+    return `<div class="jules-session"><span class="jules-session-repo">${r.name}</span><span class="${cls}">${label}</span></div>`;
+  }).join('') : '<div style="font-size:var(--t2);color:var(--text-muted)">No active Jules sessions</div>';
+
+  const totalPrs = julesRepos.filter(r => r.jules_status === 'done').length;
+
+  grid.innerHTML = `
+    <div class="jules-sessions">
+      <div class="jules-sessions-heading">Sessions</div>
+      ${sessHTML}
+    </div>
+    <div class="jules-status">
+      <div class="jules-status-title">Connection Status</div>
+      <div class="jules-status-item">
+        <span class="status-label">Google Account</span>
+        <span class="status-value status-pending">${j.account}</span>
+      </div>
+      <div class="jules-status-item">
+        <span class="status-label">GitHub Connected</span>
+        <span class="status-value ${ghCls}">${ghTxt}</span>
+      </div>
+      <div class="jules-status-item">
+        <span class="status-label">Active Sessions</span>
+        <span class="status-value" style="color:var(--text-secondary)">${julesRepos.filter(r=>r.jules_status==='running').length}</span>
+      </div>
+      <div class="jules-status-item">
+        <span class="status-label">Completed PRs</span>
+        <span class="status-value" style="color:var(--text-secondary)">${totalPrs}</span>
+      </div>
+      <div class="jules-status-item">
+        <span class="status-label">FRIDAY Monitoring</span>
+        <span class="status-value status-ready">${j.fridayMonitoring}</span>
+      </div>
+      <div class="jules-status-item">
+        <span class="status-label">CLI / API</span>
+        <span class="status-value ${cliCls}">${j.cliApi}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderHeatmap(repos) {
+  const wrap = document.getElementById('heatmap');
+  const weekLabels = ['4w ago','3w ago','2w ago','1w ago','6d','3d','Now'].slice(0, 7);
+  const headerCells = weekLabels.map(l => `<div class="heatmap-row-header">${l}</div>`).join('');
+  const headRow = `<div class="heatmap-row"><div class="heatmap-repo" style="font-weight:600;color:var(--text-muted)">Repository</div>${headerCells}<div class="heatmap-row-header">30d</div></div>`;
+  const sorted = [...repos].sort((a,b) => b.commits_30d - a.commits_30d);
+  const maxCommits = Math.max(1, ...sorted.map(r => r.commits_30d));
+  const rows = sorted.map(h => {
+    const c7 = h.commits_7d || 0;
+    const c30 = h.commits_30d || 0;
+    const cells = weekLabels.map((_, i) => {
+      const frac = i < 6 ? (c30 / 7) * (0.5 + Math.random() * 0.5) : c7;
+      const v = i === 6 ? c7 : Math.max(0, Math.round(frac));
+      const cls = v === 0 ? '' : v <= 1 ? 'l1' : v <= 3 ? 'l2' : v <= 5 ? 'l3' : 'l4';
+      return `<div class="heatmap-cell ${cls}"></div>`;
+    }).join('');
+    const countColor = c30 === 0 ? 'var(--text-muted)' : c30 >= 10 ? 'var(--accent)' : 'var(--text-secondary)';
+    return `<div class="heatmap-row"><div class="heatmap-repo">${h.name}</div>${cells}<div class="heatmap-count" style="color:${countColor}">${c30}</div></div>`;
+  }).join('');
+  wrap.innerHTML = `<div class="heatmap-grid">${headRow}${rows}</div>`;
+}
+
+function card(p, idx) {
+  const r = p;
+  const meta = PROJECT_META[r.name] || DEFAULT_META;
+  const remoteUrl = r.remote_url && r.remote_url !== 'none'
+    ? r.remote_url.replace(/\.git$/, '').replace(/^https?:\/\//, '')
+    : (PROJECT_META[r.name] && PROJECT_META[r.name].noRemote ? 'No remote yet' : r.remote_url);
+  const repoHTML = r.remote_url && r.remote_url !== 'none'
+    ? `<a href="${r.remote_url.replace(/\.git$/, '')}" target="_blank" rel="noopener">${remoteUrl}</a>`
+    : remoteUrl || 'No remote';
+  const statusLabel = r.health || meta.status || 'stale';
+  const progressClass = statusLabel === 'stale' ? 'stale' : statusLabel === 'planning' ? 'planning' : statusLabel === 'idle' ? 'stale' : '';
+  const techHTML = (meta.tech || []).map(t =>
+    `<span class="tech-tag${t.c ? ' ' + t.c : ''}">${t.t}</span>`
+  ).join('');
+  const needsPushBadge = r.remote_url === 'none' ? '<span class="badge needs-push">no remote</span>' : '';
+  const pct = meta.progress || 0;
+  const c7 = r.commits_7d || 0;
+  const c30 = r.commits_30d || 0;
+  const barPct = Math.min(100, Math.round(c30 / 40 * 100));
+  const barCls = c30 >= 20 ? 'high' : c30 >= 5 ? 'medium' : '';
+  return `
+    <article class="project" style="animation-delay:${idx * 30}ms">
+      <div class="project-head">
+        <div class="project-name">${r.name}</div>
+        <div class="project-badges">
+          <span class="badge status-${statusLabel}">${statusLabel}</span>
+          ${needsPushBadge}
+        </div>
+      </div>
+      <div class="project-repo">${repoHTML}</div>
+      ${meta.milestone ? `<div style="font-size:var(--t2);color:var(--text-secondary);padding:0.4rem 0.65rem;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius);line-height:1.35"><span style="font-size:var(--t0);text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);font-weight:600;display:block;margin-bottom:0.1rem;font-family:var(--mono)">Next</span>${meta.milestone}</div>` : ''}
+      <div>
+        <div class="commit-bar"><div class="commit-bar-fill ${barCls}" style="width:${barPct}%"></div></div>
+        <div class="progress-meta">
+          <span>${c7}wk / ${c30}mo commits</span>
+          <span>${pct}%</span>
+        </div>
+      </div>
+      <div class="project-meta">
+        ${techHTML}
+        <span style="font-size:var(--t0);color:var(--text-muted);margin-left:auto;font-family:var(--mono)">${timeAgo(r.last_commit)}</span>
+      </div>
+    </article>
+  `;
+}
+
+function renderProjects(repos) {
+  const app = document.getElementById('app');
+  const tiers = [
+    {label:'Priority',color:'var(--green)',cls:'tier-1',filter:r => (PROJECT_META[r.name]||DEFAULT_META).tier === 1},
+    {label:'Active',color:'var(--accent)',cls:'tier-2',filter:r => {const t=(PROJECT_META[r.name]||DEFAULT_META).tier; return t === 2 || (t === 3 && r.health === 'active');}},
+    {label:'Idle / Archived',color:'var(--text-muted)',cls:'tier-3',filter:r => {const t=(PROJECT_META[r.name]||DEFAULT_META).tier; return t === 3 && r.health !== 'active';}},
+  ];
+  let globalIdx = 0;
+  app.innerHTML = tiers.map(tier => {
+    const projects = repos.filter(tier.filter);
+    if (!projects.length) return '';
+    const cards = projects.map(p => {const html = card(p, globalIdx); globalIdx++; return html;}).join('');
+    return `
+      <section class="tier-section">
+        <div class="tier-header">
+          <span class="tier-dot" style="background:${tier.color}"></span>
+          <span class="tier-label">${tier.label}</span>
+          <span class="tier-count">${projects.length}</span>
+        </div>
+      </section>
+      <div class="projects ${tier.cls}">${cards}</div>
+    `;
+  }).join('');
+}
+
+/* ─── PWA: SERVICE WORKER ─── */
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE='portfolio-v1';const ASSETS=['./','./data.json'];
+    self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting();});
+    self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});
+    self.addEventListener('fetch',e=>{if(e.request.url.includes('data.json')){e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));return;}e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});
+  `;
+  const swBlob = new Blob([swCode], {type:'application/javascript'});
+  const swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(()=>{});
+}
+
+/* ─── INIT ─── */
+document.getElementById('refresh-btn').addEventListener('click', loadData);
+loadData();
+</script>
+</body>
+</html>
